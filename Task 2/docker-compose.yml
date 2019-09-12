@@ -1,0 +1,40 @@
+version: '3'
+
+networks:
+  ciNetwork:
+    driver: bridge
+
+services:
+
+  servNexus:
+    container_name: nexus
+    networks:
+      - ciNetwork
+    ports:
+      - "8081:8081"
+      - "8083:8083"
+    image: joaomarcosfelixds/mynexus:v0.1
+
+  servSonarQube:
+    container_name: sonarqube
+    networks:
+      - ciNetwork
+    ports:
+      - "9000:9000"
+    image: joaomarcosfelixds/mysonarqube:v0.1
+    depends_on: 
+      - servNexus
+
+  servJenkins:
+    container_name: jenkins
+    networks:
+      - ciNetwork
+    ports:
+      - "8085:8080"
+      - "50000:50000"
+    environment:  
+      JAVA_OPTS: "-Djava.awt.headless=true"  
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false" # Start jenkins unlocked  
+    image: joaomarcosfelixds/myjenkins:v0.1
+    depends_on: 
+      - servSonarQube

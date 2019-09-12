@@ -1,0 +1,21 @@
+spring-petclinic
+/
+src
+/
+test
+/
+java
+/
+org
+/
+springframework
+/
+samples
+/
+petclinic
+/
+service
+/
+ClinicServiceTests.java
+
+assertThat(owners).hasSize(2); | 2 -> 1

@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  petclinic:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: joaomarcosfelixds/petclinic
+    container_name: petclinic
+    ports:
+      - "8080:8080"
+    networks:
+      - petclinic-network 
+    depends_on:
+      - "mysqldb"
+
+  mysqldb:
+    image: mysql:5.7.8
+    container_name: mysqldb
+    environment:
+      - MYSQL_ROOT_PASSWORD=petclinic
+      - MYSQL_DATABASE=petclinic
+    ports:
+      - "3306:3306"
+    networks:
+      - petclinic-network    
+
+networks:
+  petclinic-network:
+    driver: bridge

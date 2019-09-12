@@ -1,0 +1,28 @@
+#A porta 8083 será exposta pois será usada pelo nosso repositório
+docker run --name mynexus --network mynetwork -p 8081:8081 -p 8083:8083 sonatype/nexus3
+
+#acesso a inteface web
+    login: admin
+    password: admin
+
+#Precisamos permitir a comunicação HTTP com o Docker. Para isso precisamos indicar que quando o Docker daemon iniciar ele deve adicionar nossa conexão na lista de conexões inseguras permitidas. Para verificar as conexões inseguras permitidas é só executar o comando "docker info" e verificar a aba "Insecure Registries:"
+
+
+   # Inserir nosso conexão as conexões inseguras permitidas
+        #Se não existir os arquivos abaixo
+        sudo mkdir -p /etc/systemd/system/docker.service.d/
+        sudo vi /etc/systemd/system/docker.service.d/override.conf
+            [Service]
+            ExecStart=
+            ExecStart=/usr/bin/dockerd --insecure-registry <IP do container Nexus>:<Porta do repositório>
+
+
+        #Caso tenhamos o Docker daemon configurado é só acrescentar nossa configuração
+        sudo vi /etc/systemd/system/docker.service.d/override.conf
+            [Service]
+            ExecStart=
+            ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2376 --insecure-registry <IP do container Nexus>:<Porta do repositório>
+
+
+        sudo systemctl daemon-reload
+        sudo systemctl restart docker.service

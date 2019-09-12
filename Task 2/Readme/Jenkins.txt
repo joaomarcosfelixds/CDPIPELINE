@@ -1,0 +1,44 @@
+# Acesso
+	login: admin
+	password: admin
+
+# Foi gerado um par de chaves SSH dentro do container myjenkins para permitir a comunicação com o GitHub
+# A chave publica foi adicionado ao GitHub
+	ssh-keygen -t rsa -b 4096 -C "joaomarcosfelixds@gmail.com"
+
+	#Configurando acesso e adicionando o git@github.com aos "~/.ssh/known hosts"
+	    1. git config --global user.name "<seu-usuario>"
+	    2. git config --global user.email <seu-usuario>@<seu-providor> 
+	    3. ssh -T git@github.com
+
+# Expor o daemon do docker
+	       sudo mkdir -p /etc/systemd/system/docker.service.d/
+
+
+	       sudo vi /etc/systemd/system/docker.service.d/override.conf
+	           [Service]
+	           ExecStart=
+	           ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2376
+
+
+	       sudo systemctl daemon-reload
+	       sudo systemctl restart docker.service
+
+# No projeto em pipeline o processo de criação/push da imagem docker e feito acessando o Docker-Host via SSH
+# É necessário permitir o acesso ssh utilizando a conta root. Para isso só precisamos alterar o arquivo /etc/ssh/sshd_config
+
+	# Alterar a linha: 
+		PermitRootLogin without-password 
+	# para: 
+		PermitRootLogin yes
+	# Em seguida reiniciar o serviço de ssh: 
+		service ssh restart 
+
+# Se houver problemas de timeout no acesso ao host, sugiro alterar o timeout
+	#Adicioanr as seguintes linhas no /etc/ssh/sshd_config
+		ClientAliveInterval 120
+        ClientAliveCountMax 720
+
+    # Em seguida reiniciar o serviço de ssh: 
+		service ssh restart 
+
